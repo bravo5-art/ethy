@@ -1,0 +1,23 @@
+const hre = require("hardhat");
+
+async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+  const recipient = "0x6de382b55D069463409ea06EDBcd342678Fc1099";
+  const tokenAddress = "YOUR_DEPLOYED_TOKEN_ADDRESS"; // replace with your token contract address
+
+  const Etcoin = await hre.ethers.getContractFactory("Etcoin");
+  const etcoin = Etcoin.attach(tokenAddress);
+
+  const balance = await etcoin.balanceOf(deployer.address);
+  console.log(`Transferring ${hre.ethers.utils.formatUnits(balance, 18)} ETC to ${recipient}...`);
+
+  const tx = await etcoin.transfer(recipient, balance);
+  await tx.wait();
+
+  console.log("Transfer complete!");
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
